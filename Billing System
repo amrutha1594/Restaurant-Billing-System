@@ -1,0 +1,100 @@
+# -------- MENU DICTIONARY --------
+menu = {"ChickenBiryani": 300, "FishBiryani": 350, "MuttonBiryani": 400,
+"EggBiryani": 250, "PrawnBiryani": 310, "ChickenManchurian": 200,
+"ChickenCurry": 220, "MuttonCurry": 360, "PrawnCurry": 370, "ChickenFry": 280,
+"Chepatikurma": 100, "Vegetablepulao": 150, "ButterNaan": 152,
+"RumaalRoti": 120, "Paneer&Parota": 130, "PaneerBiryani": 200,
+"MushroomBiryani": 220, "PaneerTikka": 180, "GobiManchurian": 110,
+"CheesyPizza": 160
+}
+
+# -------- DISPLAY MENU --------
+print("  ---------------------------------------------------------------")
+print("  |  NON VEG ITEMS           |  Price  |     VEG ITEMS         |  Price  |")
+print("  ---------------------------------------------------------------")
+nv = list(menu.items())[:10]
+vg = list(menu.items())[10:]
+i = 0
+while i < 10:
+  left = nv[i][0].ljust(22) + "| ₹" + str(nv[i][1]).ljust(6)
+  right = vg[i][0].ljust(20) + "| ₹" + str(vg[i][1]).ljust(6)
+  print("  | " + left + " | " + right + " |")
+  i = i + 1
+print("  ---------------------------------------------------------------\n")
+
+# -------- BILL NUMBER HANDLING SAFELY --------
+billno_filename = "billno.txt"
+
+try:
+  f = open(billno_filename, "r")
+  billno = int(f.read().strip())
+  f.close()
+except:
+ billno = 100
+
+try:
+  f = open(billno_filename, "w")
+  f.write(str(billno + 1))
+  f.close()
+except:
+ print("❌ Could not update bill number. Check file permissions.")
+ billno = billno + 1  # fallback
+
+# -------- INPUTS --------
+date = input("Enter date (DD/MM/YYYY): ")
+table = input("Enter table number: ")
+itemno = int(input("Enter number of items ordered: "))
+
+name = []
+price = []
+quantity = []
+total = []
+
+# -------- TAKE ORDERS --------
+i = 0
+while i < itemno:
+  item = input("Enter item name: ").strip()
+  if item in menu:
+      name.append(item)
+      price.append(menu[item])
+      valid_qty = False
+      while not valid_qty:
+          qty_input = input("Enter quantity for " + item + ": ")
+          if qty_input.isdigit() and int(qty_input) > 0:
+              quantity.append(int(qty_input))
+              valid_qty = True
+          else:
+            print("❌ Quantity must be a positive number.")
+      total.append(price[-1] * quantity[-1])
+      print("✔ Total for", item, ": ₹", total[-1], "\n")
+      i = i + 1
+  else:
+      print("❌ Item not found in menu. Please try again.\n")
+
+# -------- PRINT BILL --------
+print("\n------------------ PRIME RESTAURANT ------------------")
+print("               Banjara Hills, Hyderabad")
+print("                    Phone: 23867544")
+print("------------------------------------------------------")
+print("Date:", date, "     Table No:", table, "     Bill No:", billno)
+print("------------------------------------------------------")
+print("Item".ljust(20) + "Qty".rjust(5) + "Price".rjust(10) + "Total".rjust(10))
+print("------------------------------------------------------")
+
+sum1 = 0
+i = 0
+while i < itemno:
+  sum1 = sum1 + total[i]
+  print(name[i].ljust(20), str(quantity[i]).rjust(5), str(price[i]).rjust(10), str(total[i]).rjust(10))
+  i = i + 1
+
+tax = round(sum1 * 0.07, 2)
+final_total = round(sum1 + tax, 2)
+
+print("------------------------------------------------------")
+print("Item Total".ljust(30), "₹", sum1)
+print("Tax (7%)".ljust(30), "₹", tax)
+print("GRAND TOTAL".ljust(30), "₹", final_total)
+print("------------------------------------------------------")
+print("         Thank you for dining with us! 😊")
+print("------------------------------------------------------")
